@@ -1,4 +1,4 @@
-# Chat-Elm
+# Elm with Socket.io example
 
 ## Installation
 ```

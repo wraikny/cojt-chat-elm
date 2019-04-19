@@ -1,0 +1,16 @@
+{
+  "name": "chat-elm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server/index.js",
+  "scripts": {
+    "server": "node src/server/index.js",
+    "build": "elm make src/client/elm/Main.elm --output=src/client/output/elm.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.4"
+  }
+}
