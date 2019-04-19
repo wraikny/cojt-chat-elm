@@ -5,8 +5,6 @@
 $ npm insttall
 ```
 
-## Run
-
 compile elm to js
 ```
 $ npm run build
