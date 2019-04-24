@@ -1,14 +1,20 @@
-module Model exposing(Model, init)
+module Model exposing(..)
 
 import Msg exposing(..)
 
 -- MODEL
+type Scene
+  = Login
+  | Logging
+  | Chat
+
 
 type alias Model =
   { messages : List (Username, Chat)
   , draft : Chat
   , username : Maybe Username
-  , isUsernameDecided : Bool
+  , currentScene : Scene
+  , systemMessage : Maybe String
   }
 
 
@@ -17,7 +23,8 @@ init _ =
   ( { messages = []
     , draft = ""
     , username = Nothing
-    , isUsernameDecided = False
+    , currentScene = Login
+    , systemMessage = Nothing
     }
   , Cmd.none
   )

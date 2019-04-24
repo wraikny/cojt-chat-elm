@@ -22,4 +22,7 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  receiveMessage ReceivedChat
+  Sub.batch
+    [ receiveMessage ReceivedChat
+    , receiveLogin  NewLogin
+    ]

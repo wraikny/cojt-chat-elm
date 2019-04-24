@@ -6,7 +6,8 @@ type alias Chat = String
 
 type Msg
   = ChangeUsername Username
-  | SendUsername
+  | SendLogin
+  | NewLogin Username
   | ReceivedChat Chat
   | ChangeDraft Chat
   | SendChat
