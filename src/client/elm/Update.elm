@@ -4,7 +4,15 @@ import Model exposing (..)
 import Msg exposing (..)
 import Port exposing(..)
 
+
 -- UPDATE
+newMessage str model =
+  case str |> String.split ";" of
+    name::chatlist ->
+      let chat = String.concat chatlist in
+      { model | messages = List.append model.messages [ (name, chat ) ] }
+    _ ->
+      model
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -13,19 +21,25 @@ update msg model =
     ChangeUsername username ->
       ( { model | username = Just username }, Cmd.none )
 
-    SendUsername ->
-      if model.username /= Nothing && model.username /= Just "" then
-        ( { model | isUsernameDecided = True }, Cmd.none )
-      else
-        ( model, Cmd.none )
+    SendLogin ->
+      case model.username of
+        Nothing ->
+          ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
+        Just name ->
+          if name /= "" then
+            ({ model | currentScene = Chat}, sendLogin name)
+          else
+            ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
+
+    NewLogin username ->
+      case model.currentScene of
+        Chat ->
+          ( newMessage (username ++ "Login!") model, Cmd.none)
+        
+        _ -> (model, Cmd.none)
 
     ReceivedChat newChat ->
-      case newChat |> String.split ";" of
-        name::chatlist ->
-          let chat = String.concat chatlist in
-          ( { model | messages = List.append model.messages [ (name, chat ) ] }, Cmd.none )
-        _ ->
-          ( model, Cmd.none )
+      ( newMessage newChat model, Cmd.none)
 
     ChangeDraft draft ->
       ( { model | draft = draft }, Cmd.none )
@@ -33,7 +47,7 @@ update msg model =
     SendChat ->
       case model.username of
         Nothing ->
-          ( { model | isUsernameDecided = False }, Cmd.none )
+          ( model, Cmd.none )
         Just username ->
           let
             (name, draft) =
