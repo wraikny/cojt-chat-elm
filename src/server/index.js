@@ -14,12 +14,16 @@ app.use(
 
 app.get('/', (req, res) => {
     res.sendFile( path.resolve(__dirname + '/../client/index.html') );
-    io.emit('chat message', "test");
 });
 
 io.on('connection', socket => {
   socket.on('chat message', msg => {
+    console.log("Message: " + msg);
     io.emit('chat message', msg);
+  });
+  socket.on('new login', name => {
+    console.log("Login: " + name);
+    io.emit('new login', name);
   });
 });
 

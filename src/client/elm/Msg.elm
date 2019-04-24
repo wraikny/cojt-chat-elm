@@ -1,13 +1,12 @@
 module Msg exposing(..)
 
-type alias Username = String
-
-type alias Chat = String
+import Model exposing(..)
 
 type Msg
-  = ChangeUsername Username
+  = SetID ID
+  | ChangeUserName UserName
   | SendLogin
-  | NewLogin Username
-  | ReceivedChat Chat
+  | NewLogin UserName
+  | ReceivedChat String
   | ChangeDraft Chat
   | SendChat

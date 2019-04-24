@@ -1,8 +1,28 @@
 module Model exposing(..)
 
-import Msg exposing(..)
+type alias ID = Int
 
--- MODEL
+type alias UserName = String
+
+type alias Chat = String
+
+
+type alias User =
+  { userID : ID
+  , name : UserName
+  }
+
+type alias ChatMessage =
+  { user : User
+  , chat : Chat
+  }
+
+
+type MessageLog
+  = ChatLog ChatMessage
+  | LoginLog User
+
+
 type Scene
   = Login
   | Logging
@@ -10,21 +30,16 @@ type Scene
 
 
 type alias Model =
-  { messages : List (Username, Chat)
+  { userID : ID
+  , logs : List MessageLog
   , draft : Chat
-  , username : Maybe Username
+  , username : Maybe UserName
   , currentScene : Scene
   , systemMessage : Maybe String
   }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-  ( { messages = []
-    , draft = ""
-    , username = Nothing
-    , currentScene = Login
-    , systemMessage = Nothing
-    }
-  , Cmd.none
-  )
+isUserSelf : User -> Model ->Bool
+isUserSelf user model =
+  (user.userID == model.userID)
+  && (Just user.name == model.username)

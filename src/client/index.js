@@ -6,30 +6,30 @@ var socket = io();
 
 let debugMode = true;
 
-let debugLog = msg => {
-  if(debugMode) {
-    console.log(msg);
-  }
-};
-
 app.ports.sendMessage.subscribe( msg => {
-  socket.emit('chat message', msg);
-  debugLog("sendMessage: " + msg);
+  const json = JSON.stringify(msg);
+  socket.emit('chat message', json);
+
+  console.log("sendMessage: " + msg);
 });
 
 socket.on('chat message', msg => {
   app.ports.receiveMessage.send(msg);
   window.scrollTo(0, document.body.scrollHeight);
-  debugLog("receiveMessage: " + msg);
+
+  console.log("receiveMessage: " + msg);
 });
 
 app.ports.sendLogin.subscribe( name => {
-  socket.emit('new login', name);
-  debugLog("sendLogin: " + name);
+  const json = JSON.stringify(name);
+  socket.emit('new login', json);
+
+  console.log("sendLogin: " + name);
 });
 
 socket.on('new login', name => {
   app.ports.receiveLogin.send(name);
   window.scrollTo(0, document.body.scrollHeight);
-  debugLog("receiveLogin: " + name);
+
+  console.log("receiveLogin: " + name);
 });
