@@ -68,7 +68,7 @@ chatView model =
               in
               li [ class "chat", id msgId ]
                 [ div [ class "username" ] [ text user.name ]
-                , div [ class "chat" ] [ text chatMsg.chat ]
+                , div [ class "message" ] [ text chatMsg.chat ]
                 ]
             LoginLog user ->
               li [ class "login" ]
@@ -108,9 +108,10 @@ headView model =
       div [ class "application-head"]
         [
           h1 [] [text headTitle]
-        , p [ class "system message"]
-          [
-            text <| "System Message: " ++ str
+        , div [ class "system-message"]
+          [ div [ class "system" ]
+            [  text <| "System Message: " ]
+          , div [ class "message" ] [ text str ]
           ]
         ]
     Nothing ->
