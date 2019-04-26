@@ -48,24 +48,23 @@ update msg model =
       in
       case r of
         Ok user ->
-          let newModel = appendLog (LoginLog user) model
-          in
           case model.currentScene of
             Chat ->
-              ( newModel, Cmd.none )
+              (model |> appendLog (LoginLog user), Cmd.none)
             
             Logging ->
-              if isUserSelf user newModel then
-                ({ newModel
+              if isUserSelf user model then
+                ({ model
                 | currentScene = Chat
-                }, Cmd.none )
+                }, Cmd.none)
               else
-                ({ newModel
+                ({ model
                 | currentScene = Login
                 , username = Nothing
-                }, Cmd.none )
+                , systemMessage = Just <| "Failed to login."
+                }, Cmd.none)
             
-            _ -> ( newModel, Cmd.none )
+            _ -> (model, Cmd.none)
         Err _ ->
           ({model
           | systemMessage = Just <| "Received incorrect format login: " ++ json
