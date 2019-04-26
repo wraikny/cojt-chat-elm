@@ -56,25 +56,27 @@ chatView model =
         (
           model.logs
           |> List.map (\log ->
-            case log of
-            ChatLog chatMsg ->
-              let user = chatMsg.user
-              in
-              let
-                msgId =
-                  if isUserSelf user model
-                  then "self"
-                  else "other"
-              in
-              li [ class "chat", id msgId ]
-                [ div [ class "username" ] [ text user.name ]
-                , div [ class "message" ] [ text chatMsg.chat ]
-                ]
-            LoginLog user ->
-              li [ class "login" ]
-                [ div [ class "message" ] [ text "NewLogin: " ]
-                , div [ class "username"] [ text <| getScreenName user ]
-                ]
+            li []
+              [ case log of
+                  ChatLog chatMsg ->
+                    let user = chatMsg.user
+                    in
+                    let
+                      msgId =
+                        if isUserSelf user model
+                        then "self"
+                        else "other"
+                    in
+                    div [class "chat", class msgId]
+                      [ div [ class "username" ] [ text user.name ]
+                      , div [ class "message" ] [ text chatMsg.chat ]
+                      ]
+                  LoginLog user ->
+                    div [class "login" ]
+                      [ div [ class "message" ] [ text "NewLogin: " ]
+                      , div [ class "username"] [ text <| getScreenName user ]
+                      ]
+              ]
           )
         )
       , div [ class "chatform" ]
