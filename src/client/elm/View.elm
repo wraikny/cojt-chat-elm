@@ -72,11 +72,8 @@ chatView model =
                 ]
             LoginLog user ->
               li [ class "login" ]
-                [
-                  div [ class "message" ]
-                    [
-                      text ("NewLogin: " ++ getScreenName user)
-                    ]
+                [ div [ class "message" ] [ text "NewLogin: " ]
+                , div [ class "username"] [ text <| getScreenName user ]
                 ]
           )
         )
