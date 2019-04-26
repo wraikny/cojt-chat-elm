@@ -33,3 +33,11 @@ socket.on('new login', name => {
 
   console.log("receiveLogin: " + name);
 });
+
+
+socket.on('server log', json => {
+  app.ports.loginResult.send(json);
+  window.scrollTo(0, document.body.scrollHeight);
+
+  console.log("loginResult: " + najsonme);
+});
