@@ -50,11 +50,11 @@
   margin-bottom: 40px
 }
 
-.messages #self{
+.messages .self{
   float: right;
 } 
 
-.messages #self .chat{
+.messages .self .chat{
   display: inline-block;
   position: relative; 
   margin: 0 10px 0 0;
@@ -62,10 +62,10 @@
   max-width: 250px;
   border-radius: 12px;
   background: #30e852;
-  font-size: 15px:
+  font-size: 15px;
 }
 
-.messages #self .chat:after{
+.messages .self .chat:after{
   content: "";
   position: absolute;
   top: 3px; 
@@ -76,7 +76,7 @@
   transform: rotate(-35deg);
 }
 
-.messages #other .chat{
+.messages .other .chat{
   display: inline-block;
   position: relative; 
   margin: 0 0 0 50px;
@@ -86,7 +86,7 @@
   background: #edf1ee;
 }
 
-.messages #other .chat:after{
+.messages .other .chat:after{
   content: "";
   display: inline-block;
   position: absolute;
