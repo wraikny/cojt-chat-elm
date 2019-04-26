@@ -68,13 +68,25 @@ chatView model =
                         else "other"
                     in
                     div [class "chat", class msgId]
-                      [ div [ class "username" ] [ text user.name ]
-                      , div [ class "message" ] [ text chatMsg.chat ]
+                      [ div [ class "block" ]
+                        [ div [ class "username" ]
+                          [ text user.name
+                          ]
+                        ]
+                      , div [ class "block" ]
+                        [ div [ class "message" ]
+                            [ text chatMsg.chat
+                            ]
+                        ]
                       ]
                   LoginLog user ->
                     div [class "login" ]
-                      [ div [ class "message" ] [ text "NewLogin: " ]
-                      , div [ class "username"] [ text <| getScreenName user ]
+                      [ div [ class "newlogin" ] [ text "NewLogin: " ]
+                      , div [ class "block" ]
+                        [ div [ class "username" ]
+                          [ text <| getScreenName user
+                          ]
+                        ]
                       ]
               ]
           )
