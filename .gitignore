@@ -1,6 +1,6 @@
 node_modules
 elm-stuff
 
-src/client/output/*.js
+src/client/elm.js
 
 */.DS_Store
