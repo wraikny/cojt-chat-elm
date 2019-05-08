@@ -9,6 +9,12 @@ import Model exposing(..)
 import Msg exposing(..)
 
 
+-- onKeyPressはInt（押されたキー）とMsg（Enter）を引数にとりMsg（Enter）を発行
+onKeyPress : (Int -> Msg) -> Attribute Msg
+onKeyPress tagger =
+    Html.Events.on "keypress" (Json.map tagger Html.Events.keyCode)
+
+
 loginView : Model -> Html Msg
 loginView model =
   let
@@ -18,7 +24,11 @@ loginView model =
     [ div [ class "username-input" ]
         [ p [] [ text "username"]
         , div []
-          [ input [ placeholder "Input UserName", value username, onInput ChangeUserName ][]
+          [ input
+              [ placeholder "Input UserName"
+              , value username
+              , onInput ChangeUserName
+              , onKeyPress KeyPress ][]
           , button [ onClick SendLogin ] [ text "Send" ]
           ]
         ]
@@ -92,7 +102,7 @@ chatView model =
           )
         )
       , div [ class "chatform" ]
-        [ input [ value model.draft, onInput ChangeDraft ][]
+        [ input [ value model.draft, onInput ChangeDraft, onKeyPress KeyPress ][]
         , button [ onClick SendChat ] [ text "Send" ]
         ]
       ]

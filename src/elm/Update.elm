@@ -14,8 +14,42 @@ newMessage chatMsg model =
   { model | logs = List.append model.logs [ ChatLog chatMsg ] }
 
 
+appendLog : MessageLog -> Model -> Model
 appendLog log model =
   { model | logs = List.append model.logs [ log ] }
+
+
+onSendLogin : Model -> (Model, Cmd Msg)
+onSendLogin model =
+  case model.username of
+    Nothing ->
+      ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
+    Just name ->
+      if name /= "" then
+        let
+          cmd =
+            (User model.userID name)
+            |> encodeUser
+            |> sendLogin
+        in
+        ({ model | currentScene = Logging}, cmd)
+      else
+        ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
+
+
+onSendChat : Model -> (Model, Cmd Msg)
+onSendChat model =
+  case model.username of
+    (Just username) ->
+      let
+        cmd =
+          (ChatMessage (User model.userID username) model.draft)
+          |> encodeChatMessage
+          |> sendMessage
+      in
+      ( { model | draft = "" }, cmd)
+    _ ->
+      ( model, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -27,20 +61,7 @@ update msg model =
       ( { model | username = Just username }, Cmd.none )
 
     SendLogin ->
-      case model.username of
-        Nothing ->
-          ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
-        Just name ->
-          if name /= "" then
-            let
-              cmd =
-                (User model.userID name)
-                |> encodeUser
-                |> sendLogin
-            in
-            ({ model | currentScene = Logging}, cmd)
-          else
-            ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
+      onSendLogin model
 
     NewLogin json ->
       let
@@ -87,14 +108,17 @@ update msg model =
       ( { model | draft = draft }, Cmd.none )
 
     SendChat ->
-      case model.username of
-        (Just username) ->
-          let
-            cmd =
-              (ChatMessage (User model.userID username) model.draft)
-              |> encodeChatMessage
-              |> sendMessage
-          in
-          ( { model | draft = "" }, cmd)
+      onSendChat model
+
+    KeyPress key ->
+      case key of 
+        13 ->
+          case model.currentScene of
+            Login ->
+              onSendLogin model
+            Chat ->
+              onSendChat model
+            Logging ->
+              ( model, Cmd.none )
         _ ->
-          ( model, Cmd.none )
+          (model, Cmd.none)
