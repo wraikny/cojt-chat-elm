@@ -3,10 +3,10 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-var path = require('path');
-var port = process.env.PORT || 3001;
+let path = require('path');
 
-var logsList = [];
+let logsList = [];
+
 
 app.use(
   express.static(
@@ -46,6 +46,7 @@ io.on('connection', socket => {
   });
 });
 
+let port = process.env.PORT || 3000;
 http.listen(port, () => {
   console.log('listening on http://localhost:' + port);
 });
