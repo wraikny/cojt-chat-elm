@@ -9,3 +9,6 @@ port receiveMessage : (String -> msg) -> Sub msg
 port sendLogin : Json.Encode.Value -> Cmd msg
 
 port receiveLogin : (String -> msg) -> Sub msg
+
+
+port loginResult : (String -> msg) -> Sub msg

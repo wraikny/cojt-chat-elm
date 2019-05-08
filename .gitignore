@@ -4,3 +4,4 @@ elm-stuff
 src/client/elm.js
 
 */.DS_Store
+.vscode/*
