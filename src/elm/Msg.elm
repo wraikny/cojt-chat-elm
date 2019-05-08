@@ -10,3 +10,4 @@ type Msg
   | ReceivedChat String
   | ChangeDraft Chat
   | SendChat
+  | KeyPress Int
