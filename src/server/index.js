@@ -10,7 +10,17 @@ let createUser = (userID, name) => {
   return { userID: userID, name: name};
 };
 
+const logsListLock = new AsyncLock();
 let logsList = [];
+
+async function receiveMessage(msg) {
+  console.log("Message: " + msg);
+  io.emit('chat message', msg);
+  let handleLogsList = () => {
+    logsList.push(msg);
+  }
+  logsListLock.acquire(key, handleLogsList);
+};
 
 const userTableLock = new AsyncLock();
 let nextUsserId = 0;
@@ -19,22 +29,30 @@ let usertable = [];
 async function receiveAttepmtLogin(name) {
   let isSuccessLogin = true;
   if (isSuccessLogin) {
-    await userTableLock.acquire(key, () => {
-      let userID = nextUsserId;
+    let userID;
+    let handleUserTable = () => {
+      userID = nextUsserId;
       nextUsserId++;
-
-      io.to(socket.id).emit('success login', userID);
-
-      let userJson = createUser(userID, name)
       usertable.push(userJson);
-      console.log("Login: " + JSON.stringify(userJson));
+    };
 
+    await userTableLock.acquire(key, handleUserTable);
+    
+    io.to(socket.id).emit('success login', userID);
+  
+    let userJson = createUser(userID, name)
+    socket.broadcast.emit('new login', JSON.stringify(userJson));
+    console.log("Login: " + JSON.stringify(userJson));
+    
+    let handleLogsList = () => {
       logsList.push(userJson);
+  
+      // TODO: ログを送る
+      io.to(socket.id).emit('server log', JSON.stringify(logs));
+    };
 
-      socket.broadcast.emit('new login', JSON.stringify(userJson));
-    });
-    // TODO: ログを送る
-    io.to(socket.id).emit('server log', JSON.stringify(logs));
+    await logsListLock.acquire(key, handleLogsList);
+
   } else {
     io.to(socket.id).emit('failed login', "something message");
   }
@@ -52,9 +70,7 @@ app.get('/', (req, res) => {
 
 io.on('connection', socket => {
   socket.on('chat message', msg => {
-    console.log("Message: " + msg);
-    logsList.push(msg);
-    io.emit('chat message', msg);
+    receiveMessage(msg);
   });
 
   socket.on('attempt login', name => {
