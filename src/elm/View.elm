@@ -52,10 +52,13 @@ chatView : Model -> Html Msg
 chatView model =
   let
     screenName =
+      -- let
+      --   id = model.userID |> Maybe.map String.fromInt |> Maybe.withDefault "Missing"
+      -- in
       let
         name = model.username |> Maybe.withDefault "Missing"
       in
-      getScreenName <| User model.userID name
+      name
   in
   div []
     [ div [ class "head"]

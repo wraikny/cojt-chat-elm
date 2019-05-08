@@ -25,8 +25,8 @@ main =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
-    [ receiveLoginSuccess (Success >> ReceiveLoginResult)
-    , receiveLoginFailed (Failed >> ReceiveLoginResult)
+    [ receiveLoginSuccess (ReceiveLoginSuccess)
+    , receiveLoginFailed (ReceiveLoginFailed)
     , receiveMessage ReceivedChat
     , receiveLogin  NewLogin
     ]

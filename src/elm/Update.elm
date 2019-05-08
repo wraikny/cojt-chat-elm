@@ -72,17 +72,15 @@ update msg model =
         _ ->
           (model, Cmd.none)
 
-    ReceiveLoginResult result ->
-      case result of
-        Success id ->
-          ({ model
-          | userID = Just id
-          , currentScene = Chat
-          }, Cmd.none)
-        Failed e ->
-          ({ initModel
-          | systemMessage = Just <| "Failed to login." ++ e
-          }, Cmd.none)
+    ReceiveLoginSuccess id ->
+      ( { model
+        | userID = Just id
+        , currentScene = Chat
+        }, Cmd.none)
+    ReceiveLoginFailed e ->
+      ( { initModel
+        | systemMessage = Just <| "Failed to login." ++ e
+        }, Cmd.none)
 
     NewLogin json ->
       case model.currentScene of
@@ -92,7 +90,7 @@ update msg model =
           in
           case r of
             Ok user ->
-                  (model |> appendLog (LoginLog user), Cmd.none)
+              (model |> appendLog (LoginLog user), Cmd.none)
             
             Err _ ->
               ({model
