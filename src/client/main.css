@@ -47,7 +47,7 @@
 }
 
 .messages {
-  margin-bottom: 40px
+  margin-bottom: 40px;
 }
 
 .messages .block {
@@ -58,17 +58,16 @@
   text-align: right;
 } 
 
-.messages .message {
-  /* ここに改行 */
-}
 
 .messages .self .message{
   display: inline-block;
   position: relative; 
   margin: 2px 10px 0 0;
   padding: 6px;
+  max-width: 500px;
+  word-wrap: break-word;
   border-radius: 12px;
-  background: #30e852;
+  background: #00FFFF;
   font-size: 15px;
 }
 
@@ -78,16 +77,33 @@
   top: 3px; 
   right: -19px;
   border: 8px solid transparent;
-  border-left: 18px solid #30e852;
+  border-left: 18px solid #00FFFF;
   -webkit-transform: rotate(-35deg);
   transform: rotate(-35deg);
 }
 
-.messages .other .massage{
-  /* 吹き出しを出す */
-  
+.messages .other .message{
+  display: inline-block;
+  position: relative; 
+  margin: 2px 0 0 10px;
+  padding: 6px;
+  max-width: 500px;
+  word-wrap: break-word;
+  border-radius: 12px;
+  background: #FFFF00;
 }
 
+.messages .other .message:after{
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 3px; 
+  left: -19px;
+  border: 8px solid transparent;
+  border-right: 18px solid #FFFF00;
+  -webkit-transform: rotate(35deg);
+  transform: rotate(35deg);
+}
 
 .messages .chat .username{
   display: inline; 
@@ -98,4 +114,10 @@
   transition: .4s;
 }
 
+.login{
+  text-align: center;
+}
 
+/* .other #text{
+  float: left;
+} */
