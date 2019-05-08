@@ -13,7 +13,7 @@ let debugPrint = x => {
 };
 
 
-
+/// msg : json
 app.ports.sendMessage.subscribe( msg => {
   const json = JSON.stringify(msg);
   socket.emit('chat message', json);
@@ -21,11 +21,12 @@ app.ports.sendMessage.subscribe( msg => {
   debugPrint("sendMessage: " + msg);
 });
 
-socket.on('chat message', msg => {
-  app.ports.receiveMessage.send(msg);
+// json : stringified json
+socket.on('chat message', json => {
+  app.ports.receiveMessage.send(json);
   window.scrollTo(0, document.body.scrollHeight);
 
-  debugPrint("receiveMessage: " + msg);
+  debugPrint("receiveMessage: " + json);
 });
 
 
@@ -36,27 +37,30 @@ app.ports.sendLogin.subscribe( name => {
   debugPrint("attemptLogin: " + name);
 });
 
+// id : int
 socket.on('success login', id => {
   app.ports.receiveLoginSuccess.send(id);
   debugPrint("successLogin: " + id);
 });
 
+// msg : string
 socket.on('failed login', msg => {
   app.ports.receiveLoginFailed.send(msg);
   debugPrint("successLogin: " + msg);
 });
 
-socket.on('new login', name => {
-  app.ports.receiveLogin.send(name);
+// json : stringified json
+socket.on('new login', json => {
+  app.ports.receiveLogin.send(json);
   window.scrollTo(0, document.body.scrollHeight);
 
-  debugPrint("receiveLogin: " + name);
+  debugPrint("receiveLogin: " + json);
 });
 
-
+// json : stringified json
 socket.on('server log', json => {
   app.ports.loginResult.send(json);
   window.scrollTo(0, document.body.scrollHeight);
 
-  debugPrint("loginResult: " + najsonme);
+  debugPrint("loginResult: " + json);
 });
