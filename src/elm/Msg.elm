@@ -6,8 +6,9 @@ type Msg
   = SetID ID
   | ChangeUserName UserName
   | SendLogin
+  | SendLoginKey Int
   | NewLogin UserName
   | ReceivedChat String
   | ChangeDraft Chat
   | SendChat
-  | KeyPress Int
+  | SendChatKey Int

@@ -62,6 +62,13 @@ update msg model =
 
     SendLogin ->
       onSendLogin model
+  
+    SendLoginKey key ->
+      case key of 
+        13 ->
+          onSendLogin model
+        _ ->
+          (model, Cmd.none)
 
     NewLogin json ->
       let
@@ -110,15 +117,9 @@ update msg model =
     SendChat ->
       onSendChat model
 
-    KeyPress key ->
+    SendChatKey key ->
       case key of 
         13 ->
-          case model.currentScene of
-            Login ->
-              onSendLogin model
-            Chat ->
-              onSendChat model
-            Logging ->
-              ( model, Cmd.none )
+          onSendChat model
         _ ->
           (model, Cmd.none)
