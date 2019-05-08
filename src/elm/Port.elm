@@ -12,5 +12,4 @@ port receiveLoginSuccess : (Int -> msg) -> Sub msg
 port receiveLoginFailed : (String -> msg) -> Sub msg
 port receiveLogin : (String -> msg) -> Sub msg
 
-
-port loginResult : (String -> msg) -> Sub msg
+port receiveServerLog : (String -> msg) -> Sub msg

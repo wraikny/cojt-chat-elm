@@ -29,6 +29,7 @@ subscriptions model =
     , receiveLoginFailed (ReceiveLoginFailed)
     , receiveMessage ReceivedChat
     , receiveLogin  NewLogin
+    , receiveServerLog ReceiveLog
     ]
 
 

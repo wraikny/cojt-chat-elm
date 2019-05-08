@@ -21,6 +21,7 @@ type alias ChatMessage =
 type MessageLog
   = ChatLog ChatMessage
   | LoginLog User
+  | Error String
 
 
 type Scene
@@ -59,9 +60,3 @@ isUserSelf : User -> Model -> Bool
 isUserSelf user model =
   (Just user.userID == model.userID)
   && (Just user.name == model.username)
-
-
--- isUserSelf : User -> Model ->Bool
--- isUserSelf user model =
---   (Just user.userID == model.userID)
---   && (Just user.name == model.username)

@@ -59,7 +59,7 @@ socket.on('new login', json => {
 
 // json : stringified json
 socket.on('server log', json => {
-  app.ports.loginResult.send(json);
+  app.ports.receiveServerLog.send(json);
   window.scrollTo(0, document.body.scrollHeight);
 
   debugPrint("loginResult: " + json);

@@ -82,6 +82,16 @@ update msg model =
         | systemMessage = Just <| "Failed to login." ++ e
         }, Cmd.none)
 
+    ReceiveLog json ->
+      let
+        r = Json.Decode.decodeString (Json.Decode.list logDecoder) json
+      in
+      case r of
+        Ok logs ->
+          ( { model | logs = logs }, Cmd.none )
+        Err _ ->
+          ( model, Cmd.none )
+
     NewLogin json ->
       case model.currentScene of
         Chat ->

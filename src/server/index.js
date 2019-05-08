@@ -34,8 +34,7 @@ async function receiveAttepmtLogin(name) {
       socket.broadcast.emit('new login', JSON.stringify(userJson));
     });
     // TODO: ログを送る
-    // let log = "";
-    // io.to(socket.id).emit('server log', log);
+    io.to(socket.id).emit('server log', JSON.stringify(logs));
   } else {
     io.to(socket.id).emit('failed login', "something message");
   }
@@ -59,7 +58,6 @@ io.on('connection', socket => {
   });
 
   socket.on('attempt login', name => {
-
       receiveAttepmtLogin(name);
   });
 });

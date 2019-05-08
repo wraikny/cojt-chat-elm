@@ -33,3 +33,15 @@ chatMessageDecoder =
   D.map2 ChatMessage
     (D.field "user" userDecoder)
     (D.field "chat" D.string)
+
+
+logDecoder : Decoder MessageLog
+logDecoder =
+  D.oneOf
+    [ userDecoder
+      |> D.andThen(LoginLog >> D.succeed)
+    , chatMessageDecoder
+      |> D.andThen(ChatLog >> D.succeed)
+    , D.string
+      |> D.andThen(Error >> D.succeed)
+    ]
