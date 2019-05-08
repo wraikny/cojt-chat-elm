@@ -25,19 +25,13 @@ main =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
-    [ receiveMessage ReceivedChat
+    [ receiveLoginSuccess (Success >> ReceiveLoginResult)
+    , receiveLoginFailed (Failed >> ReceiveLoginResult)
+    , receiveMessage ReceivedChat
     , receiveLogin  NewLogin
     ]
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-  ( { userID = 0
-    , logs = []
-    , draft = ""
-    , username = Nothing
-    , currentScene = Login
-    , systemMessage = Nothing
-    }
-  , Random.generate SetID <| Random.int 0 100000
-  )
+  ( initModel, Cmd.none )

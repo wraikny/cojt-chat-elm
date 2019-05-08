@@ -21,42 +21,44 @@ appendLog log model =
 
 onSendLogin : Model -> (Model, Cmd Msg)
 onSendLogin model =
+  let
+    errorResult = ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
+  in
   case model.username of
-    Nothing ->
-      ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
     Just name ->
       if name /= "" then
         let
           cmd =
-            (User model.userID name)
-            |> encodeUser
+            name
             |> sendLogin
         in
         ({ model | currentScene = Logging}, cmd)
+
       else
-        ({ model | systemMessage = Just "Input usrname"}, Cmd.none)
+        errorResult
+    Nothing -> errorResult
 
 
 onSendChat : Model -> (Model, Cmd Msg)
 onSendChat model =
-  case model.username of
-    (Just username) ->
+  case (getUser model) of
+    Just user ->
       let
         cmd =
-          (ChatMessage (User model.userID username) model.draft)
+          (ChatMessage user model.draft)
           |> encodeChatMessage
           |> sendMessage
       in
       ( { model | draft = "" }, cmd)
-    _ ->
-      ( model, Cmd.none )
+    Nothing ->
+      ( { initModel
+        | systemMessage = Just "Your user data is incorrect"
+        }, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    SetID userID ->
-      ( { model | userID = userID }, Cmd.none )
     ChangeUserName username ->
       ( { model | username = Just username }, Cmd.none )
 
@@ -70,46 +72,50 @@ update msg model =
         _ ->
           (model, Cmd.none)
 
-    NewLogin json ->
-      let
-        r = Json.Decode.decodeString userDecoder json
-      in
-      case r of
-        Ok user ->
-          case model.currentScene of
-            Chat ->
-              (model |> appendLog (LoginLog user), Cmd.none)
-            
-            Logging ->
-              if isUserSelf user model then
-                ({ model
-                | currentScene = Chat
-                }, Cmd.none)
-              else
-                ({ model
-                | currentScene = Login
-                , username = Nothing
-                , systemMessage = Just <| "Failed to login."
-                }, Cmd.none)
-            
-            _ -> (model, Cmd.none)
-        Err _ ->
-          ({model
-          | systemMessage = Just <| "Received incorrect format login: " ++ json
+    ReceiveLoginResult result ->
+      case result of
+        Success id ->
+          ({ model
+          | userID = Just id
+          , currentScene = Chat
           }, Cmd.none)
+        Failed e ->
+          ({ initModel
+          | systemMessage = Just <| "Failed to login." ++ e
+          }, Cmd.none)
+
+    NewLogin json ->
+      case model.currentScene of
+        Chat ->
+          let
+            r = Json.Decode.decodeString userDecoder json
+          in
+          case r of
+            Ok user ->
+                  (model |> appendLog (LoginLog user), Cmd.none)
+            
+            Err _ ->
+              ({model
+              | systemMessage = Just <| "Received incorrect format login: " ++ json
+              }, Cmd.none)
+        _ -> (model, Cmd.none)
       
 
     ReceivedChat json ->
-      let
-        r = Json.Decode.decodeString chatMessageDecoder json
-      in
-      case r of
-        Ok newChat ->
-          ( newMessage newChat model, Cmd.none)
-        Err _ ->
-          ({model
-          | systemMessage = Just <| "Received incorrect format message: " ++ json
-          }, Cmd.none)
+      case model.currentScene of
+        Chat ->
+          let
+            r = Json.Decode.decodeString chatMessageDecoder json
+          in
+          case r of
+            Ok newChat ->
+              ( newMessage newChat model, Cmd.none)
+            Err _ ->
+              ({model
+              | systemMessage = Just <| "Received incorrect format message: " ++ json
+              }, Cmd.none)
+        _ ->
+          ( model, Cmd.none )
 
     ChangeDraft draft ->
       ( { model | draft = draft }, Cmd.none )

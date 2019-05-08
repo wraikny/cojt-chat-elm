@@ -30,16 +30,32 @@ type Scene
 
 
 type alias Model =
-  { userID : ID
+  { userID : Maybe ID
+  , username : Maybe UserName
   , logs : List MessageLog
   , draft : Chat
-  , username : Maybe UserName
   , currentScene : Scene
   , systemMessage : Maybe String
   }
 
+initModel : Model
+initModel =
+  { userID = Nothing
+  , username = Nothing
+  , logs = []
+  , draft = ""
+  , currentScene = Login
+  , systemMessage = Nothing
+  }
 
-isUserSelf : User -> Model ->Bool
-isUserSelf user model =
-  (user.userID == model.userID)
-  && (Just user.name == model.username)
+
+getUser model =
+  case (model.userID, model.username) of
+    (Just id, Just name) -> Just (User id name)
+    _ -> Nothing
+
+
+-- isUserSelf : User -> Model ->Bool
+-- isUserSelf user model =
+--   (Just user.userID == model.userID)
+--   && (Just user.name == model.username)

@@ -6,8 +6,10 @@ port sendMessage : Json.Encode.Value -> Cmd msg
 
 port receiveMessage : (String -> msg) -> Sub msg
 
-port sendLogin : Json.Encode.Value -> Cmd msg
+port sendLogin : String -> Cmd msg
 
+port receiveLoginSuccess : (Int -> msg) -> Sub msg
+port receiveLoginFailed : (String -> msg) -> Sub msg
 port receiveLogin : (String -> msg) -> Sub msg
 
 
