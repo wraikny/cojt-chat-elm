@@ -19,7 +19,8 @@ async function receiveMessage(msg) {
   let handleLogsList = () => {
     logsList.push(msg);
   }
-  logsListLock.acquire(key, handleLogsList);
+  await logsListLock.acquire(key, handleLogsList);
+
 };
 
 const userTableLock = new AsyncLock();
@@ -27,35 +28,28 @@ let nextUsserId = 0;
 let usertable = [];
 
 async function receiveAttepmtLogin(name) {
-  let isSuccessLogin = true;
-  if (isSuccessLogin) {
-    let userID;
-    let handleUserTable = () => {
-      userID = nextUsserId;
-      nextUsserId++;
-      usertable.push(userJson);
-    };
+  let userID;
+  let handleUserTable = () => {
+    userID = nextUsserId;
+    nextUsserId++;
+    usertable.push(userJson);
+  };
 
-    await userTableLock.acquire(key, handleUserTable);
-    
-    io.to(socket.id).emit('success login', userID);
-  
-    let userJson = createUser(userID, name)
-    socket.broadcast.emit('new login', JSON.stringify(userJson));
-    console.log("Login: " + JSON.stringify(userJson));
-    
-    let handleLogsList = () => {
-      logsList.push(userJson);
-  
-      // TODO: ログを送る
-      io.to(socket.id).emit('server log', JSON.stringify(logs));
-    };
+  await userTableLock.acquire(key, handleUserTable);
 
-    await logsListLock.acquire(key, handleLogsList);
+  io.to(socket.id).emit('success login', userID);
 
-  } else {
-    io.to(socket.id).emit('failed login', "something message");
-  }
+  let userJson = createUser(userID, name)
+  socket.broadcast.emit('new login', JSON.stringify(userJson));
+  console.log("Login: " + JSON.stringify(userJson));
+
+  let sendLog;
+  let handleLogsList = () => {
+    logsList.push(userJson);
+    sendLog = JSON.stringify(logs);
+  };
+  await logsListLock.acquire(key, handleLogsList);
+  io.to(socket.id).emit('server log', sendLog);
 }
 
 app.use(
@@ -70,11 +64,16 @@ app.get('/', (req, res) => {
 
 io.on('connection', socket => {
   socket.on('chat message', msg => {
-    receiveMessage(msg);
+    let isSuccessLogin = true;
+    if (isSuccessLogin) {
+      receiveMessage(msg);
+    }else {
+      io.to(socket.id).emit('failed login', "something message");
+    }
   });
 
   socket.on('attempt login', name => {
-      receiveAttepmtLogin(name);
+    receiveAttepmtLogin(name);
   });
 });
 
