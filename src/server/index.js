@@ -5,7 +5,14 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 let path = require('path');
 
+let createUser = (userID, name) => {
+  return { userID: userID, name: name};
+};
+
 let logsList = [];
+
+let nextUsserId = 0;
+let usertable = [];
 
 
 app.use(
@@ -29,17 +36,23 @@ io.on('connection', socket => {
     // TODO: ユーザーリストを確認
     let isSuccessLogin = true;
     if(isSuccessLogin) {
-      let userid = 0;
-      console.log("Login: " + name);
-      logsList.push(name);
-  
-      socket.broadcast.emit('new login', name)
-      
-      io.to(socket.id).emit('success login', userid);
-  
+
+      let userID = nextUsserId;
+      nextUsserId++;
+
+      io.to(socket.id).emit('success login', userID);
+
+      let userJson = createUser(userID, name)
+      usertable.push( userJson );
+      console.log("Login: " + JSON.stringify(userJson));
+
+      logsList.push(userJson);
+
+      socket.broadcast.emit('new login', JSON.stringify(userJson));
+
       // TODO: ログを送る
-      let log = "";
-      io.to(socket.id).emit('server log', log);
+      // let log = "";
+      // io.to(socket.id).emit('server log', log);
     } else {
       io.to(socket.id).emit('failed login', "something message");
     }
