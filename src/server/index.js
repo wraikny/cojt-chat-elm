@@ -25,18 +25,24 @@ io.on('connection', socket => {
     io.emit('chat message', msg);
   });
 
-  socket.on('new login', name => {
+  socket.on('attempt login', name => {
     // TODO: ユーザーリストを確認
-    console.log("Login: " + name);
-    logsList.push(name);
-
-    socket.broadcast.emit('new login', name)
-    
-    io.to(socket.id).emit('new login', name);
-
-    // TODO: ログを送る
-    let log = "";
-    io.to(socket.id).emit('server log', log);
+    let isSuccessLogin = true;
+    if(isSuccessLogin) {
+      let userid = 0;
+      console.log("Login: " + name);
+      logsList.push(name);
+  
+      socket.broadcast.emit('new login', name)
+      
+      io.to(socket.id).emit('success login', userid);
+  
+      // TODO: ログを送る
+      let log = "";
+      io.to(socket.id).emit('server log', log);
+    } else {
+      io.to(socket.id).emit('failed login', "something message");
+    }
   });
 });
 
